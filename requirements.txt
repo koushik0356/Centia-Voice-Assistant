@@ -1,0 +1,6 @@
+flask
+openai
+python-dotenv
+chromadb
+sentence-transformers
+langchain-text-splitters

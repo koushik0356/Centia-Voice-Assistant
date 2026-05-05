@@ -1,0 +1,33 @@
+# Environments
+joharVenv/
+venv/
+env/
+.venv/
+.env
+.env.*
+
+# Python / Compilation
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# IDEs / OS Cache
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Future Vector DB / Data Local
+chroma_db/
+instance/
+*.sqlite3
+
+# Logs & Junk
+*.log
+pdf_content.txt
+.pytest_cache/
+coverage.xml
+htmlcov/

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centia – Centurion University AI Guide</title>
+    <meta name="description" content="Centia is the AI-powered voice assistant for Centurion University of Technology and Management, Andhra Pradesh campus.">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-red: #CE2027;
+            --brand-red-dark: #9F161C;
+            --brand-blue: #2A549F;
+            --brand-blue-dark: #1A3668;
+            --charcoal: #231F20;
+            --bg: #F2F4F8;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --text-muted: #6B7280;
+            --text-light: #9CA3AF;
+            --bot-bubble: #F4F6F9;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.09);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--charcoal);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 16px 48px;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .brand-logo {
+            max-height: 72px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--charcoal);
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Chat Window ── */
+        #chat-box {
+            width: 100%;
+            max-width: 680px;
+            height: 480px;
+            overflow-y: auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 16px;
+            scroll-behavior: smooth;
+        }
+        #chat-box::-webkit-scrollbar { width: 5px; }
+        #chat-box::-webkit-scrollbar-track { background: transparent; }
+        #chat-box::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+
+        /* ── Bubbles ── */
+        .msg-wrapper {
+            display: flex;
+            width: 100%;
+            animation: slideUp 0.28s ease-out both;
+        }
+        .msg-wrapper.user { justify-content: flex-end; }
+        .msg-wrapper.bot  { justify-content: flex-start; }
+
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 78%;
+            font-size: 0.94rem;
+            line-height: 1.65;
+        }
+        .user-msg {
+            background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(42,84,159,0.18);
+        }
+        .bot-msg {
+            background: var(--bot-bubble);
+            color: var(--charcoal);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* Thinking indicator */
+        .thinking-dots span {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            margin: 0 2px;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+        .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* ── Interaction Dock ── */
+        .interaction-area {
+            width: 100%;
+            max-width: 680px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .text-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #text-input {
+            flex: 1;
+            padding: 13px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            background: var(--bg);
+            transition: border-color 0.25s, box-shadow 0.25s;
+            color: var(--charcoal);
+        }
+        #text-input:focus {
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(42,84,159,0.1);
+            background: #fff;
+        }
+
+        .send-btn {
+            background: var(--charcoal);
+            color: white;
+            border: none;
+            padding: 13px 26px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .send-btn:hover { background: #374151; transform: translateY(-1px); }
+        .send-btn:active { transform: translateY(0); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+            margin: 0 12px;
+        }
+
+        /* ── Mic Button ── */
+        .mic-btn {
+            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-red-dark) 100%);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(206,32,39,0.28);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .mic-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(206,32,39,0.38);
+        }
+        .mic-btn.listening {
+            background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+            box-shadow: 0 0 0 0 rgba(42,84,159,0.6);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* ── Status bar ── */
+        #status-bar {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 4px;
+        }
+        #status {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            min-height: 20px;
+        }
+        #stop-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px 14px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        #stop-btn:hover { background: #f3f4f6; color: var(--charcoal); }
+
+        .footer {
+            margin-top: 28px;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* ── Animations ── */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40%            { transform: scale(1);   opacity: 1; }
+        }
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(42,84,159,0.5); }
+            70%  { box-shadow: 0 0 0 16px rgba(42,84,159,0); }
+            100% { box-shadow: 0 0 0 0 rgba(42,84,159,0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="brand-logo" alt="Centurion University" onerror="this.style.display='none'">
+        <h1>Centia Assistant</h1>
+        <p>Your Dedicated Academic Guide — Centurion University, AP</p>
+    </div>
+
+    <div id="chat-box">
+        <div class="msg-wrapper bot">
+            <div class="bubble bot-msg">Hello! I'm Centia, your guide to Centurion University. Ask me anything about programs, fees, faculty, placements, or campus life!</div>
+        </div>
+    </div>
+
+    <div class="interaction-area">
+        <div class="text-input-row">
+            <input type="text" id="text-input" placeholder="Ask me anything about the university..." onkeydown="handleEnter(event)" autocomplete="off">
+            <button class="send-btn" id="send-btn" onclick="sendTextQuestion()">Send</button>
+        </div>
+
+        <div class="divider">or speak</div>
+
+        <button id="mic-btn" class="mic-btn" onclick="startListening()">
+            🎤 Tap to Speak
+        </button>
+    </div>
+
+    <div id="status-bar">
+        <span id="status">Ready.</span>
+        <button id="stop-btn" onclick="stopSpeaking()">⏹ Stop Speaking</button>
+    </div>
+
+    <div class="footer">Powered by Advanced GenAI &nbsp;•&nbsp; CUTM-AP</div>
+
+    <script>
+        // ── DOM refs ──
+        const chatBox   = document.getElementById('chat-box');
+        const statusEl  = document.getElementById('status');
+        const micBtn    = document.getElementById('mic-btn');
+        const sendBtn   = document.getElementById('send-btn');
+        const textInput = document.getElementById('text-input');
+        const stopBtn   = document.getElementById('stop-btn');
+
+        // ── Browser Speech Recognition ──
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        let recognition = null;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+        }
+
+        function startListening() {
+            if (!recognition) {
+                alert("Voice input requires Google Chrome or Microsoft Edge.");
+                return;
+            }
+            stopSpeaking(); // stop any ongoing speech before listening
+            try { recognition.start(); } catch(e) { /* already started */ }
+        }
+
+        if (recognition) {
+            recognition.onstart = () => {
+                micBtn.classList.add('listening');
+                micBtn.innerHTML = '🎙️ Listening...';
+                setStatus("I'm listening...");
+            };
+            recognition.onspeechend = () => {
+                recognition.stop();
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '🎤 Tap to Speak';
+                setStatus("Processing...");
+            };
+            recognition.onresult = (e) => {
+                processUserQuery(e.results[0][0].transcript);
+            };
+            recognition.onerror = (e) => {
+                micBtn.classList.remove('listening');
+                micBtn.innerHTML = '🎤 Tap to Speak';
+                setStatus("Mic error: " + e.error);
+            };
+        }
+
+        // ── Text Input ──
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendTextQuestion();
+        }
+        function sendTextQuestion() {
+            const val = textInput.value.trim();
+            if (!val) return;
+            textInput.value = '';
+            stopSpeaking();
+            processUserQuery(val);
+        }
+
+        // ── Core Query Handler ──
+        function processUserQuery(text) {
+            addMessage(text, 'user-msg', 'user');
+            setStatus("Thinking...");
+            setInputEnabled(false);
+
+            // Show animated thinking bubble
+            const thinkingId = addThinkingBubble();
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            })
+            .then(r => r.json())
+            .then(data => {
+                removeThinkingBubble(thinkingId);
+                if (data.response) {
+                    addMessage(data.response, 'bot-msg', 'bot');
+                    speak(data.response);
+                }
+                setInputEnabled(true);
+            })
+            .catch(err => {
+                removeThinkingBubble(thinkingId);
+                setStatus("Connection error. Please try again.");
+                console.error(err);
+                setInputEnabled(true);
+            });
+        }
+
+        // ── Browser Text-to-Speech (Native, Zero Latency) ──
+        function speak(text) {
+            if (!window.speechSynthesis) {
+                setStatus("Ready.");
+                return;
+            }
+            stopSpeaking();
+
+            // Strip markdown symbols for cleaner speech
+            const clean = text
+                .replace(/[*_#`~\[\]]/g, '')
+                .replace(/\n+/g, ' ')
+                .trim();
+
+            const utterance = new SpeechSynthesisUtterance(clean);
+            utterance.lang = 'en-IN';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            // Prefer an Indian English voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang === 'en-IN') ||
+                                   voices.find(v => v.lang.startsWith('en'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            utterance.onstart = () => {
+                setStatus("Speaking...");
+                stopBtn.style.display = 'block';
+            };
+            utterance.onend = () => {
+                setStatus("Ready.");
+                stopBtn.style.display = 'none';
+            };
+            utterance.onerror = () => {
+                setStatus("Ready.");
+                stopBtn.style.display = 'none';
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function stopSpeaking() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            stopBtn.style.display = 'none';
+            setStatus("Ready.");
+        }
+
+        // ── DOM Helpers ──
+        function addMessage(text, className, wrapperClass) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'msg-wrapper ' + wrapperClass;
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble ' + className;
+            bubble.innerText = text;
+            wrapper.appendChild(bubble);
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        }
+
+        function addThinkingBubble() {
+            const id = 'thinking-' + Date.now();
+            const wrapper = document.createElement('div');
+            wrapper.id = id;
+            wrapper.className = 'msg-wrapper bot';
+            wrapper.innerHTML = `<div class="bubble bot-msg thinking-dots"><span></span><span></span><span></span></div>`;
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            return id;
+        }
+
+        function removeThinkingBubble(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function setStatus(msg) { statusEl.innerText = msg; }
+
+        function setInputEnabled(enabled) {
+            textInput.disabled = !enabled;
+            sendBtn.disabled   = !enabled;
+            sendBtn.style.opacity = enabled ? '1' : '0.5';
+        }
+
+        // Pre-load voices on page load (required for some browsers)
+        window.speechSynthesis.getVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
+    </script>
+</body>
+</html>
