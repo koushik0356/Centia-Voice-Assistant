@@ -1,4 +1,4 @@
-
+# 🎙️ Centia – AI Voice Assistant for Centurion University
 
 ![Python](https://img.shields.io/badge/Python-3.8+-3776ab?style=flat&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-000000?style=flat&logo=flask&logoColor=white)
@@ -8,9 +8,6 @@
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-LLM_API-FF6B9D?style=flat&logo=openai)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT_SDK-00A67E?style=flat&logo=openai)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat&logo=javascript&logoColor=black)
-
-
-# 🎙️ Centia – AI Voice Assistant for Centurion University
 
 **Centia** is an intelligent, conversational voice assistant designed to provide students, faculty, and visitors with instant, accurate information about Centurion University of Technology and Management (CUTM-AP). Powered by advanced RAG (Retrieval-Augmented Generation) technology and a custom LLM pipeline, Centia delivers natural, human-like responses through a modern web interface.
 
